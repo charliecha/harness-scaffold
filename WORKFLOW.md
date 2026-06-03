@@ -54,8 +54,8 @@
 
 **强制步骤**（缺一不可）：
 1. 按 `docs/architecture/ADR-XXX.md` 实现代码
-2. 调用 **Build Skill**（`bash skills/build.sh`）→ 必须 PASSED
-3. 调用 **Test Skill**（`bash skills/test.sh`）→ 必须 PASSED
+2. 调用 **Build Skill**（`bash .claude/skills/build.sh`）→ 必须 PASSED
+3. 调用 **Test Skill**（`bash .claude/skills/test.sh`）→ 必须 PASSED
 
 **必须产出**：
 - 源代码（符合 `docs/architecture/ADR-XXX.md` 包结构）
@@ -133,7 +133,7 @@ bash scripts/gatekeeper.sh
 
 每个阶段的 Agent 只持有以下上下文：
 - 自己阶段的输入产物
-- 自己角色的职责定义（`subagents/*.json`）
+- 自己角色的职责定义（`.claude/agents/*.md`）
 - 本工作流文档
 
 **不得**将其他阶段的讨论历史带入当前阶段，防止认知污染。
