@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CMD=$(jq -r '.tool_input.command // empty' 2>/dev/null); bash scripts/check-phase.sh \"$CMD\" 2>/dev/null || true",
+            "statusMessage": "检查工作流阶段..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CMD=$(jq -r '.tool_input.command // empty' 2>/dev/null); echo \"$CMD\" | grep -q 'gatekeeper.sh' && EXIT=$(jq -r '.tool_response.exitCode // \"0\"' 2>/dev/null) && [ \"$EXIT\" = \"0\" ] && bash scripts/workflow.sh gate-pass 2>/dev/null || true",
+            "statusMessage": "更新工作流状态..."
+          }
+        ]
+      }
+    ]
+  }
+}
