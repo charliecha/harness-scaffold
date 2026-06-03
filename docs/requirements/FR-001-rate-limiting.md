@@ -1,4 +1,10 @@
-# REQUIREMENTS.md — 限流功能
+# FR-001 — 限流功能
+
+**状态**：Done
+**关联 ADR**：[ADR-001](../architecture/ADR-001-rate-limiting.md)
+**关联 Review**：[RV-001](../reviews/RV-001-rate-limiting.md)
+
+---
 
 ## 功能需求
 

@@ -1,4 +1,10 @@
-# ARCHITECTURE.md — 限流功能
+# ADR-001 — 限流功能架构设计
+
+**状态**：Accepted
+**关联需求**：[FR-001](../requirements/FR-001-rate-limiting.md)
+**关联 Review**：[RV-001](../reviews/RV-001-rate-limiting.md)
+
+---
 
 ## 包结构变更
 
@@ -53,3 +59,8 @@ mux.Handle("/snapshot/", rl.Limit(http.HandlerFunc(h.Snapshot)))
 ## 安全边界
 
 无新增外部 API、无凭证、无硬编码值。
+
+## 已知遗留问题
+
+- W-01：`X-Forwarded-For` 信任未加限制，后续迭代加 `--trusted-proxy` flag（见 RV-001）
+- W-02：limiter 无 TTL 淘汰，后续迭代引入清理机制（见 RV-001）

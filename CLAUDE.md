@@ -47,3 +47,6 @@
 - 守门人脚本：`scripts/gatekeeper.sh`
 - 工作流协议：`WORKFLOW.md`（完整阶段定义）
 - 角色职责：`agents/ROLES.md`
+- 需求索引：`docs/requirements/INDEX.md`
+- 架构索引：`docs/architecture/INDEX.md`
+- 审查索引：`docs/reviews/INDEX.md`
