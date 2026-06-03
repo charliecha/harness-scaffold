@@ -78,16 +78,14 @@ bash scripts/workflow.sh complete
 - **PostToolUse**：`gatekeeper.sh` 执行成功后，自动执行 `workflow.sh gate-pass`
 
 ## 参考文档
-- 编译 Skill（可执行）：`skills/build.sh`
-- 测试 Skill（可执行）：`skills/test.sh`
-- 编译 SOP（文档）：`skills/build.md`
-- 测试 SOP（文档）：`skills/test.md`
+- 编译 Skill：`skills/build.sh`
+- 测试 Skill：`skills/test.sh`
 - 守门人脚本：`scripts/gatekeeper.sh`
+- 接口冒烟测试：`scripts/smoke_test.sh`
 - 工作流状态管理：`scripts/workflow.sh`
 - Push 拦截器：`scripts/check-phase.sh`
 - 工作流协议：`WORKFLOW.md`（完整阶段定义）
-- 角色职责（文档）：`agents/ROLES.md`
-- 角色配置（可执行）：`subagents/*.json`
+- 角色配置：`subagents/*.json`
 - 需求索引：`docs/requirements/INDEX.md`
 - 架构索引：`docs/architecture/INDEX.md`
 - 审查索引：`docs/reviews/INDEX.md`
