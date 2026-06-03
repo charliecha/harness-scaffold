@@ -14,11 +14,21 @@
 set -uo pipefail
 
 STATE_FILE=".workflow-state.json"
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-CYAN='\033[0;36m'
-NC='\033[0m'
+
+# Only use color when stdout is a real terminal (not piped or redirected)
+if [ -t 1 ]; then
+    GREEN='\033[0;32m'
+    RED='\033[0;31m'
+    YELLOW='\033[1;33m'
+    CYAN='\033[0;36m'
+    NC='\033[0m'
+else
+    GREEN=''
+    RED=''
+    YELLOW=''
+    CYAN=''
+    NC=''
+fi
 
 PHASES=("idle" "requirements" "architecture" "dev" "gatekeeper" "qa-review" "pm-acceptance" "complete")
 

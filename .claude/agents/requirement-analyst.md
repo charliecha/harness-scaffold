@@ -30,7 +30,10 @@ bash scripts/workflow.sh set-artifact requirements docs/requirements/FR-XXX.md
 
 ## 工作流衔接
 
-用户确认需求文档后，执行：
+用户确认需求文档后：
+1. 回填文档末尾确认记录表格（确认人、确认时间、确认方式、备注）
+2. 将 `docs/requirements/INDEX.md` 中本需求的状态从 `Active` 改为 `Done`，填写关联 ADR 和 Review 列（暂填 `—`）
+3. 执行：
 ```bash
 bash scripts/workflow.sh advance architecture
 ```

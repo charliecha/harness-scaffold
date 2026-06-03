@@ -21,7 +21,10 @@ tools: Read, Bash
 
 ## 结论
 
-**Accept**：所有 FR/NFR 满足，执行：
+**Accept**：所有 FR/NFR 满足，依次执行：
+1. 更新 `docs/requirements/INDEX.md`：本需求状态改为 `Done`，填写关联 ADR 和 Review 编号
+2. 更新 `docs/architecture/INDEX.md`：本 ADR 状态改为 `Accepted`，填写关联 Review 编号
+3. 执行：
 ```bash
 bash scripts/workflow.sh complete
 ```

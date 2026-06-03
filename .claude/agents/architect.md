@@ -36,7 +36,10 @@ bash scripts/workflow.sh set-artifact architecture docs/architecture/ADR-XXX.md
 
 ## 工作流衔接
 
-用户确认架构方案后，执行：
+用户确认架构方案后：
+1. 回填文档末尾确认记录表格（确认人、确认时间、确认方式、备注）
+2. 将 `docs/architecture/INDEX.md` 中本 ADR 的状态从 `Proposed` 改为 `Accepted`
+3. 执行：
 ```bash
 bash scripts/workflow.sh advance dev
 ```
