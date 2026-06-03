@@ -5,16 +5,15 @@
 ### 编译与测试
 - 修改任何 `.go` 文件后，必须执行 **Build Skill**（`bash .claude/skills/build.sh`）验证通过
 - 提交代码前必须执行 **Test Skill**（`bash .claude/skills/test.sh`）验证通过
-- 永远不能仅靠主观判断报告"完成"——必须有脚本退出码 = 0 作为依据
 
 ### 安全红线
-- 禁止在代码中硬编码 API Key、密码、Token、Secret
-- 所有外部凭证必须通过环境变量注入
+
+- 禁止在代码中硬编码 API Key、密码、Token、Secret（必须通过环境变量注入）
 - HTTP handler 不得直接暴露内部错误堆栈给客户端
 
 ### 日志规范
-- 所有日志必须使用结构化日志（`log/slog`）
-- 禁止在 `internal/` 目录下使用裸 `fmt.Println` / `fmt.Printf` 输出业务日志
+
+- 所有日志必须使用结构化日志（`log/slog`），禁止裸 `fmt.Println` / `fmt.Printf`
 - 错误日志必须包含 `err` 字段
 
 ### 代码质量
@@ -27,6 +26,7 @@
 - 不允许为"通过检查"而修改检查标准本身
 - Sub-Agent 角色之间只通过可验证产物交接，不接受口头承诺
 - **git push 前必须 gatekeeper 通过**（由 `.claude/settings.json` hooks 强制执行）
+- gatekeeper 失败 → 退回 dev；QA Critical > 0 → 退回 dev 重走 gatekeeper；PM Reject → 退回对应阶段
 
 ## 开发工作流程
 
@@ -35,29 +35,17 @@
 ### 阶段命令
 
 ```bash
-# 查看当前状态
-bash scripts/workflow.sh status
-
-# 启动新功能（进入 requirements 阶段）
-bash scripts/workflow.sh start <feature-name>
-
-# 记录阶段产物
+bash scripts/workflow.sh status                                          # 查看当前状态
+bash scripts/workflow.sh start <feature-name>                            # 启动新功能
 bash scripts/workflow.sh set-artifact requirements docs/requirements/FR-XXX.md
 bash scripts/workflow.sh set-artifact architecture docs/architecture/ADR-XXX.md
 bash scripts/workflow.sh set-artifact review docs/reviews/RV-XXX.md
-
-# 推进阶段（前置条件不满足则自动拒绝）
 bash scripts/workflow.sh advance architecture   # requirements → architecture
 bash scripts/workflow.sh advance dev            # architecture → dev
 bash scripts/workflow.sh advance gatekeeper     # dev → gatekeeper
 bash scripts/workflow.sh advance qa-review      # 需 gatekeeper_passed=true
 bash scripts/workflow.sh advance pm-acceptance  # 需 review 产物存在
-
-# gatekeeper 通过后自动由 hook 执行（也可手动）
-bash scripts/workflow.sh gate-pass
-
-# 完成功能
-bash scripts/workflow.sh complete
+bash scripts/workflow.sh complete               # 完成功能
 ```
 
 ### 阶段与角色对照
@@ -84,9 +72,7 @@ bash scripts/workflow.sh complete
 - 接口冒烟测试：`scripts/smoke_test.sh`
 - 工作流状态管理：`scripts/workflow.sh`
 - Push 拦截器：`scripts/check-phase.sh`
-- 工作流协议：`WORKFLOW.md`（完整阶段定义）
 - 角色配置：`.claude/agents/*.md`
 - 需求索引：`docs/requirements/INDEX.md`
 - 架构索引：`docs/architecture/INDEX.md`
 - 审查索引：`docs/reviews/INDEX.md`
-
