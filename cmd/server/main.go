@@ -14,6 +14,7 @@ import (
 	"github.com/harness-claude/crypto-snapshot/internal/cache"
 	"github.com/harness-claude/crypto-snapshot/internal/client"
 	"github.com/harness-claude/crypto-snapshot/internal/handler"
+	"github.com/harness-claude/crypto-snapshot/internal/metrics"
 	"github.com/harness-claude/crypto-snapshot/internal/middleware"
 	"golang.org/x/time/rate"
 )
@@ -52,12 +53,14 @@ func main() {
 		handler.VersionInfo{Version: Version, Commit: Commit, BuildTime: BuildTime},
 	)
 
+	col := metrics.New()
 	rl := middleware.New(rate.Limit(*rateLimit), *burst, logger)
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/health", h.Health)
-	mux.HandleFunc("/version", h.Version)
-	mux.Handle("/snapshot/", rl.Limit(http.HandlerFunc(h.Snapshot)))
+	mux.Handle("/snapshot/", col.Middleware("/snapshot/*", rl.Limit(http.HandlerFunc(h.Snapshot))))
+	mux.HandleFunc("/health", col.WrapFunc("/health", h.Health))
+	mux.HandleFunc("/version", col.WrapFunc("/version", h.Version))
+	mux.HandleFunc("/metrics", h.Metrics(col))
 
 	srv := &http.Server{
 		Addr:         *addr,

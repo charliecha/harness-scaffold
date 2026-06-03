@@ -3,6 +3,7 @@
 | ID | 标题 | 状态 | 关联需求 | 关联 Review |
 |----|------|------|---------|------------|
 | [ADR-001](ADR-001-rate-limiting.md) | 限流功能架构设计 | Accepted | FR-001 | RV-001 |
+| [ADR-002](ADR-002-metrics.md) | 接口统计功能架构设计 | Accepted | FR-002 | RV-002 |
 
 ## 状态说明
 

@@ -10,6 +10,7 @@ import (
 
 	"github.com/harness-claude/crypto-snapshot/internal/cache"
 	"github.com/harness-claude/crypto-snapshot/internal/client"
+	"github.com/harness-claude/crypto-snapshot/internal/metrics"
 )
 
 // PriceFetcher abstracts the CoinGecko client for testing.
@@ -96,6 +97,14 @@ func (h *Handler) Snapshot(w http.ResponseWriter, r *http.Request) {
 	h.cache.Set(coinID, price)
 	h.logger.Info("cache miss — fetched", slog.String("coin", coinID), slog.Float64("price_usd", price.PriceUSD))
 	writeJSON(w, http.StatusOK, toResponse(price))
+}
+
+// Metrics returns current per-route request statistics.
+// The /metrics route itself is not counted (NFR-01).
+func (h *Handler) Metrics(col *metrics.Collector) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, http.StatusOK, col.Snapshot())
+	}
 }
 
 type snapshotResponse struct {
