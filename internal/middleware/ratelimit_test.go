@@ -52,9 +52,10 @@ func TestLimit_blocks429WhenBurstExceeded(t *testing.T) {
 	allowed := 0
 	blocked := 0
 	for _, code := range results {
-		if code == http.StatusOK {
+		switch code {
+		case http.StatusOK:
 			allowed++
-		} else if code == http.StatusTooManyRequests {
+		case http.StatusTooManyRequests:
 			blocked++
 		}
 	}

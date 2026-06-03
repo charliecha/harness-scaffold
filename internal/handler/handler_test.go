@@ -48,7 +48,7 @@ func TestHealth(t *testing.T) {
 	}
 
 	var body map[string]string
-	json.NewDecoder(rec.Body).Decode(&body)
+	_ = json.NewDecoder(rec.Body).Decode(&body)
 	if body["status"] != "ok" {
 		t.Errorf("got status %q, want %q", body["status"], "ok")
 	}
@@ -65,7 +65,7 @@ func TestVersion(t *testing.T) {
 	}
 
 	var body map[string]string
-	json.NewDecoder(rec.Body).Decode(&body)
+	_ = json.NewDecoder(rec.Body).Decode(&body)
 	if body["version"] != "test" {
 		t.Errorf("got version %q, want %q", body["version"], "test")
 	}
@@ -87,7 +87,7 @@ func TestSnapshot_success(t *testing.T) {
 	}
 
 	var body snapshotResponse
-	json.NewDecoder(rec.Body).Decode(&body)
+	_ = json.NewDecoder(rec.Body).Decode(&body)
 	if body.Coin != "bitcoin" {
 		t.Errorf("got coin %q, want %q", body.Coin, "bitcoin")
 	}
@@ -152,7 +152,7 @@ func TestSnapshot_upstreamError(t *testing.T) {
 
 	// Verify internal error is not leaked to client
 	var body map[string]string
-	json.NewDecoder(rec.Body).Decode(&body)
+	_ = json.NewDecoder(rec.Body).Decode(&body)
 	if body["error"] == "connection refused" {
 		t.Error("internal error details should not be exposed to client")
 	}

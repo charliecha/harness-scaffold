@@ -23,7 +23,7 @@ func TestFetchPrice_success(t *testing.T) {
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(body)
+		_, _ = w.Write(body)
 	}))
 	defer srv.Close()
 
@@ -50,7 +50,7 @@ func TestFetchPrice_success(t *testing.T) {
 func TestFetchPrice_notFound(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte("[]"))
+		_, _ = w.Write([]byte("[]"))
 	}))
 	defer srv.Close()
 
@@ -76,7 +76,7 @@ func TestFetchPrice_serverError(t *testing.T) {
 
 func TestFetchPrice_invalidJSON(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("not json"))
+		_, _ = w.Write([]byte("not json"))
 	}))
 	defer srv.Close()
 

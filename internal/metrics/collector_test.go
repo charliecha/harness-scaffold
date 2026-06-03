@@ -113,7 +113,7 @@ func TestMiddleware_implicitStatus200(t *testing.T) {
 	c := New()
 	// Handler writes body without calling WriteHeader (implicit 200)
 	inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{}`))
+		_, _ = w.Write([]byte(`{}`))
 	})
 
 	handler := c.Middleware("/snapshot/*", inner)
