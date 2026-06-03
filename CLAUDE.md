@@ -31,12 +31,12 @@
 
 所有功能开发必须遵循 `WORKFLOW.md` 定义的六阶段流程，不得跳过任何阶段：
 
-1. **Phase 1 需求确认** — 产出 `REQUIREMENTS.md`，用户确认后才能进入下一阶段
-2. **Phase 2 架构设计** — 产出 `ARCHITECTURE.md`，守门人确认无安全风险后才能进入
+1. **Phase 1 需求确认** — 产出 `docs/requirements/FR-XXX.md`，用户确认后才能进入下一阶段
+2. **Phase 2 架构设计** — 产出 `docs/architecture/ADR-XXX.md`，守门人确认无安全风险后才能进入
 3. **Phase 3 实现** — 必须依次通过 Build Skill + Test Skill，才能提交交接报告
 4. **Phase 4 守门人校验** — 运行 `bash scripts/gatekeeper.sh`，exit 0 才能进入下一阶段
-5. **Phase 5 QA 审查** — 产出 `review.md`，Critical = 0 才能进入
-6. **Phase 6 PM 验收** — 逐条对照 `REQUIREMENTS.md` 验收
+5. **Phase 5 QA 审查** — 产出 `docs/reviews/RV-XXX.md`，Critical = 0 才能进入
+6. **Phase 6 PM 验收** — 逐条对照 `docs/requirements/FR-XXX.md` 验收
 
 **禁止**：在用户未确认当前阶段产物的情况下，主动推进到下一阶段。
 

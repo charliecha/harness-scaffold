@@ -20,10 +20,10 @@
 
 **执行者**：需求分析师
 
-**必须产出**：`REQUIREMENTS.md`（含功能需求、非功能需求、排除范围、每条需求的验收标准）
+**必须产出**：`docs/requirements/FR-XXX.md`（含功能需求、非功能需求、排除范围、每条需求的验收标准）
 
 **进入下一阶段条件**：
-- [ ] 用户明确确认 `REQUIREMENTS.md` 内容
+- [ ] 用户明确确认 `docs/requirements/FR-XXX.md` 内容
 - [ ] 每条功能需求有可验证的验收标准
 
 **失败处理**：用户提出修改 → 需求分析师更新文档 → 重新确认。
@@ -32,14 +32,14 @@
 
 ## Phase 2：架构设计
 
-**触发条件**：`REQUIREMENTS.md` 已由用户确认。
+**触发条件**：`docs/requirements/FR-XXX.md` 已由用户确认。
 
 **执行者**：架构师
 
-**必须产出**：`ARCHITECTURE.md`（含包结构、核心接口、数据流、技术选型）
+**必须产出**：`docs/architecture/ADR-XXX.md`（含包结构、核心接口、数据流、技术选型）
 
 **进入下一阶段条件**：
-- [ ] `ARCHITECTURE.md` 存在且覆盖所有功能需求
+- [ ] `docs/architecture/ADR-XXX.md` 存在且覆盖所有功能需求
 - [ ] 守门人确认架构文档不包含安全风险描述（如明文存储密钥的方案）
 
 **失败处理**：守门人发现安全风险 → 退回架构师修改。
@@ -48,17 +48,17 @@
 
 ## Phase 3：实现
 
-**触发条件**：`ARCHITECTURE.md` 已审核通过。
+**触发条件**：`docs/architecture/ADR-XXX.md` 已审核通过。
 
 **执行者**：开发者
 
 **强制步骤**（缺一不可）：
-1. 按 `ARCHITECTURE.md` 实现代码
+1. 按 `docs/architecture/ADR-XXX.md` 实现代码
 2. 调用 **Build Skill**（`skills/build.md`）→ 必须 PASSED
 3. 调用 **Test Skill**（`skills/test.md`）→ 必须 PASSED
 
 **必须产出**：
-- 源代码（符合 `ARCHITECTURE.md` 包结构）
+- 源代码（符合 `docs/architecture/ADR-XXX.md` 包结构）
 - `bin/crypto-snapshot`（可执行文件）
 - `coverage.out`（覆盖率数据）
 
@@ -105,7 +105,7 @@ bash scripts/gatekeeper.sh
 
 **执行者**：QA/Reviewer
 
-**必须产出**：`review.md`（Critical / Warning / Info 分级）
+**必须产出**：`docs/reviews/RV-XXX.md`（Critical / Warning / Info 分级）
 
 **进入下一阶段条件**：
 - [ ] Critical 问题数量 = 0
@@ -121,7 +121,7 @@ bash scripts/gatekeeper.sh
 
 **执行者**：PM
 
-**操作**：逐条对照 `REQUIREMENTS.md` 中的验收标准检查。
+**操作**：逐条对照 `docs/requirements/FR-XXX.md` 中的验收标准检查。
 
 **结果**：
 - Accept：所有 FR/NFR 满足 → **流程完成**
@@ -144,10 +144,10 @@ bash scripts/gatekeeper.sh
 
 | 产物 | 创建阶段 | 创建者 |
 |------|---------|--------|
-| `REQUIREMENTS.md` | Phase 1 | 需求分析师 |
-| `ARCHITECTURE.md` | Phase 2 | 架构师 |
+| `docs/requirements/FR-XXX.md` | Phase 1 | 需求分析师 |
+| `docs/architecture/ADR-XXX.md` | Phase 2 | 架构师 |
 | `bin/crypto-snapshot` | Phase 3 | 开发者（via Build Skill） |
 | `coverage.out` | Phase 3 | 开发者（via Test Skill） |
 | Gatekeeper 报告 | Phase 4 | 守门人（脚本输出） |
-| `review.md` | Phase 5 | QA/Reviewer |
+| `docs/reviews/RV-XXX.md` | Phase 5 | QA/Reviewer |
 | 验收结论 | Phase 6 | PM |

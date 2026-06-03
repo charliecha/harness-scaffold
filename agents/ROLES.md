@@ -8,11 +8,11 @@
 
 | 角色 | 关注点 | 输入 | 输出产物 |
 |------|--------|------|----------|
-| 需求分析师 | What & Why | 用户需求 | `REQUIREMENTS.md` |
-| 架构师 | How（系统设计） | `REQUIREMENTS.md` | `ARCHITECTURE.md` |
-| 开发者 | 实现 | `ARCHITECTURE.md` | 源代码 + `bin/` + `coverage.out` |
+| 需求分析师 | What & Why | 用户需求 | `docs/requirements/FR-XXX.md` |
+| 架构师 | How（系统设计） | `docs/requirements/FR-XXX.md` | `docs/architecture/ADR-XXX.md` |
+| 开发者 | 实现 | `docs/architecture/ADR-XXX.md` | 源代码 + `bin/` + `coverage.out` |
 | 守门人 | 客观验证 | 源代码 + 二进制 | Pass/Fail 报告（基于脚本退出码） |
-| QA/Reviewer | 代码质量审查 | 源代码 + 守门人报告 | `review.md` |
+| QA/Reviewer | 代码质量审查 | 源代码 + 守门人报告 | `docs/reviews/RV-XXX.md` |
 | PM | 需求验收 | 所有产物 | 最终验收结论 |
 
 ---
@@ -25,7 +25,7 @@
 
 **禁止**：提出架构方案、建议技术选型。
 
-**输出格式**（`REQUIREMENTS.md`）：
+**输出格式**（`docs/requirements/FR-XXX.md`）：
 ```
 ## 功能需求
 - [ ] FR-01: ...（含验收标准）
@@ -46,7 +46,7 @@
 
 **禁止**：修改需求、开始实现。
 
-**输出格式**（`ARCHITECTURE.md`）：
+**输出格式**（`docs/architecture/ADR-XXX.md`）：
 ```
 ## 包结构
 ## 核心接口定义（Go interface）
@@ -59,7 +59,7 @@
 
 ### 开发者 (Developer)
 
-**职责**：严格按照 `ARCHITECTURE.md` 实现代码。
+**职责**：严格按照 `docs/architecture/ADR-XXX.md` 实现代码。
 
 **强制**：实现完成后必须依次调用 Build Skill → Test Skill。
 
@@ -98,10 +98,10 @@ bash scripts/gatekeeper.sh
 
 **关注维度**：
 1. 安全：输入验证、错误信息泄漏、并发安全
-2. 可读性：命名、包结构是否符合 `ARCHITECTURE.md`
+2. 可读性：命名、包结构是否符合 `docs/architecture/ADR-XXX.md`
 3. 边界处理：空值、超时、外部 API 失败
 
-**输出**（`review.md`）：
+**输出**（`docs/reviews/RV-XXX.md`）：
 ```
 ## Critical（必须修复）
 ## Warning（建议修复）
@@ -114,7 +114,7 @@ Critical > 0 → 退回开发者。
 
 ### PM (Product Manager)
 
-**职责**：对照 `REQUIREMENTS.md` 逐条验收，不评价代码质量（那是 QA 的事）。
+**职责**：对照 `docs/requirements/FR-XXX.md` 逐条验收，不评价代码质量（那是 QA 的事）。
 
 **禁止**：在 QA 通过前介入。
 
