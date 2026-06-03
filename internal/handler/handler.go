@@ -136,7 +136,26 @@ func (h *Handler) Snapshot(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, toResponse(price))
 }
 
-// Metrics returns current per-route request statistics.
+// CacheStatus returns a snapshot of all unexpired cache entries.
+func (h *Handler) CacheStatus(w http.ResponseWriter, r *http.Request) {
+	type entryResponse struct {
+		CoinID   string `json:"coin_id"`
+		TTLSec   int64  `json:"ttl_sec"`
+		HitCount int64  `json:"hit_count"`
+	}
+	type statusResponse struct {
+		Coins []entryResponse `json:"coins"`
+	}
+
+	entries := h.cache.Status()
+	coins := make([]entryResponse, len(entries))
+	for i, e := range entries {
+		coins[i] = entryResponse{CoinID: e.CoinID, TTLSec: e.TTLSec, HitCount: e.HitCount}
+	}
+	writeJSON(w, http.StatusOK, statusResponse{Coins: coins})
+}
+
+
 // The /metrics route itself is not counted (NFR-01).
 func (h *Handler) Metrics(col *metrics.Collector) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

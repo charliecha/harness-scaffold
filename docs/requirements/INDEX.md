@@ -5,6 +5,7 @@
 | [FR-001](FR-001-rate-limiting.md) | 限流功能 | Done | ADR-001 | RV-001 |
 | [FR-002](FR-002-metrics.md) | 接口统计功能 | Done | ADR-002 | RV-002 |
 | [FR-003](FR-003-health-check-enhancement.md) | 健康检查增强 | Done | ADR-003 | RV-003 |
+| [FR-004](FR-004-cache-status.md) | 缓存状态接口 | Done | ADR-004 | RV-004 |
 
 ## 状态说明
 

@@ -5,6 +5,7 @@
 | [RV-001](RV-001-rate-limiting.md) | 限流功能 QA 审查 | Passed | FR-001 | ADR-001 |
 | [RV-002](RV-002-metrics.md) | 接口统计功能 QA 审查 | Passed | FR-002 | ADR-002 |
 | [RV-003](RV-003-health-check-enhancement.md) | 健康检查增强 QA 审查 | Passed | FR-003 | ADR-003 |
+| [RV-004](RV-004-cache-status.md) | 缓存状态接口 QA 审查 | Passed | FR-004 | ADR-004 |
 
 ## 状态说明
 

@@ -326,3 +326,92 @@ func TestMetrics_doesNotCountItself(t *testing.T) {
 		t.Error("/metrics should not count itself (NFR-01 violated)")
 	}
 }
+
+func TestCacheStatus_hitCountResetOnSet(t *testing.T) {
+	h := newTestHandler(&mockFetcher{})
+	h.cache.Set("bitcoin", &client.CoinPrice{ID: "bitcoin", PriceUSD: 50000, UpdatedAt: time.Now()})
+	h.cache.Get("bitcoin")
+	h.cache.Get("bitcoin")
+	// AC-8: overwrite resets hit_count to 0
+	h.cache.Set("bitcoin", &client.CoinPrice{ID: "bitcoin", PriceUSD: 60000, UpdatedAt: time.Now()})
+
+	rec := httptest.NewRecorder()
+	h.CacheStatus(rec, httptest.NewRequest(http.MethodGet, "/cache/status", nil))
+
+	var body struct {
+		Coins []struct {
+			HitCount int64 `json:"hit_count"`
+		} `json:"coins"`
+	}
+	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if len(body.Coins) != 1 {
+		t.Fatalf("want 1 coin, got %d", len(body.Coins))
+	}
+	if body.Coins[0].HitCount != 0 {
+		t.Errorf("AC-8: hit_count after Set want 0, got %d", body.Coins[0].HitCount)
+	}
+}
+
+func TestCacheStatus_empty(t *testing.T) {
+	h := newTestHandler(&mockFetcher{})
+	rec := httptest.NewRecorder()
+	h.CacheStatus(rec, httptest.NewRequest(http.MethodGet, "/cache/status", nil))
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("got %d, want 200", rec.Code)
+	}
+	if ct := rec.Header().Get("Content-Type"); ct != "application/json" {
+		t.Errorf("Content-Type: got %q, want application/json", ct)
+	}
+	var body map[string]any
+	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	coins, ok := body["coins"]
+	if !ok {
+		t.Fatal("response missing 'coins' field")
+	}
+	if arr, ok := coins.([]any); !ok || len(arr) != 0 {
+		t.Errorf("want empty coins array, got %v", coins)
+	}
+}
+
+func TestCacheStatus_withEntries(t *testing.T) {
+	h := newTestHandler(&mockFetcher{})
+	h.cache.Set("bitcoin", &client.CoinPrice{ID: "bitcoin", PriceUSD: 50000, UpdatedAt: time.Now()})
+	h.cache.Get("bitcoin")
+	h.cache.Get("bitcoin")
+
+	rec := httptest.NewRecorder()
+	h.CacheStatus(rec, httptest.NewRequest(http.MethodGet, "/cache/status", nil))
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("got %d, want 200", rec.Code)
+	}
+
+	var body struct {
+		Coins []struct {
+			CoinID   string `json:"coin_id"`
+			TTLSec   int64  `json:"ttl_sec"`
+			HitCount int64  `json:"hit_count"`
+		} `json:"coins"`
+	}
+	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if len(body.Coins) != 1 {
+		t.Fatalf("want 1 coin, got %d", len(body.Coins))
+	}
+	e := body.Coins[0]
+	if e.CoinID != "bitcoin" {
+		t.Errorf("coin_id: got %q, want %q", e.CoinID, "bitcoin")
+	}
+	if e.TTLSec < 1 {
+		t.Errorf("ttl_sec: want >= 1, got %d", e.TTLSec)
+	}
+	if e.HitCount != 2 {
+		t.Errorf("hit_count: want 2, got %d", e.HitCount)
+	}
+}

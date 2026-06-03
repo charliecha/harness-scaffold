@@ -66,6 +66,7 @@ func main() {
 	mux.HandleFunc("/health", col.WrapFunc("/health", h.Health))
 	mux.HandleFunc("/version", col.WrapFunc("/version", h.Version))
 	mux.HandleFunc("/metrics", h.Metrics(col))
+	mux.HandleFunc("/cache/status", h.CacheStatus)
 
 	srv := &http.Server{
 		Addr:         *addr,
