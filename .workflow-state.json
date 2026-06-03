@@ -1,12 +1,73 @@
 {
-  "phase": "idle",
-  "feature": "",
-  "started_at": "",
-  "gatekeeper_passed": false,
+  "phase": "complete",
+  "feature": "health-check-enhancement",
+  "started_at": "2026-06-03T12:43:21Z",
+  "gatekeeper_passed": true,
   "artifacts": {
-    "requirements": "",
-    "architecture": "",
-    "review": ""
+    "requirements": "docs/requirements/FR-003-health-check-enhancement.md",
+    "architecture": "docs/architecture/ADR-003-health-check-enhancement.md",
+    "review": "docs/reviews/RV-003-health-check-enhancement.md"
   },
-  "history": []
+  "history": [
+    {
+      "event": "started",
+      "phase": "requirements",
+      "time": "2026-06-03T12:43:21Z"
+    },
+    {
+      "event": "artifact_set_requirements",
+      "phase": "requirements",
+      "time": "2026-06-03T12:44:28Z"
+    },
+    {
+      "event": "advanced_to_architecture",
+      "phase": "architecture",
+      "time": "2026-06-03T12:46:31Z"
+    },
+    {
+      "event": "artifact_set_architecture",
+      "phase": "architecture",
+      "time": "2026-06-03T12:48:28Z"
+    },
+    {
+      "event": "advanced_to_dev",
+      "phase": "dev",
+      "time": "2026-06-03T12:51:42Z"
+    },
+    {
+      "event": "advanced_to_gatekeeper",
+      "phase": "gatekeeper",
+      "time": "2026-06-03T12:57:20Z"
+    },
+    {
+      "event": "gatekeeper_passed",
+      "phase": "gatekeeper",
+      "time": "2026-06-03T12:58:44Z"
+    },
+    {
+      "event": "gatekeeper_passed",
+      "phase": "gatekeeper",
+      "time": "2026-06-03T12:59:27Z"
+    },
+    {
+      "event": "advanced_to_qa-review",
+      "phase": "qa-review",
+      "time": "2026-06-03T12:59:27Z"
+    },
+    {
+      "event": "artifact_set_review",
+      "phase": "qa-review",
+      "time": "2026-06-03T13:02:14Z"
+    },
+    {
+      "event": "advanced_to_pm-acceptance",
+      "phase": "pm-acceptance",
+      "time": "2026-06-03T13:03:09Z"
+    },
+    {
+      "event": "completed",
+      "phase": "complete",
+      "time": "2026-06-03T13:04:32Z"
+    }
+  ]
 }

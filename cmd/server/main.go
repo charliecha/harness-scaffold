@@ -14,6 +14,7 @@ import (
 	"github.com/harness-claude/crypto-snapshot/internal/cache"
 	"github.com/harness-claude/crypto-snapshot/internal/client"
 	"github.com/harness-claude/crypto-snapshot/internal/handler"
+	"github.com/harness-claude/crypto-snapshot/internal/health"
 	"github.com/harness-claude/crypto-snapshot/internal/metrics"
 	"github.com/harness-claude/crypto-snapshot/internal/middleware"
 	"golang.org/x/time/rate"
@@ -27,11 +28,12 @@ var (
 )
 
 func main() {
-	showVersion := flag.Bool("version", false, "print version and exit")
-	addr        := flag.String("addr", ":8080", "listen address")
-	cacheTTL    := flag.Duration("cache-ttl", 60*time.Second, "price cache TTL")
-	rateLimit   := flag.Float64("rate-limit", 10.0, "requests per second per IP")
-	burst       := flag.Int("burst", 20, "burst size per IP")
+	showVersion     := flag.Bool("version", false, "print version and exit")
+	addr            := flag.String("addr", ":8080", "listen address")
+	cacheTTL        := flag.Duration("cache-ttl", 60*time.Second, "price cache TTL")
+	rateLimit       := flag.Float64("rate-limit", 10.0, "requests per second per IP")
+	burst           := flag.Int("burst", 20, "burst size per IP")
+	probeTimeout    := flag.Duration("health-probe-timeout", 3*time.Second, "upstream health probe timeout")
 	flag.Parse()
 
 	if *showVersion {
@@ -46,11 +48,14 @@ func main() {
 
 	coinClient := client.New()
 	priceCache := cache.New(*cacheTTL)
+	checkers := []health.Checker{health.NewCoinGeckoChecker()}
 	h := handler.New(
 		priceCache,
 		coinClient,
 		logger,
 		handler.VersionInfo{Version: Version, Commit: Commit, BuildTime: BuildTime},
+		checkers,
+		*probeTimeout,
 	)
 
 	col := metrics.New()

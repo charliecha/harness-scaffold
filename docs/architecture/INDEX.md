@@ -4,6 +4,7 @@
 |----|------|------|---------|------------|
 | [ADR-001](ADR-001-rate-limiting.md) | 限流功能架构设计 | Accepted | FR-001 | RV-001 |
 | [ADR-002](ADR-002-metrics.md) | 接口统计功能架构设计 | Accepted | FR-002 | RV-002 |
+| [ADR-003](ADR-003-health-check-enhancement.md) | 健康检查增强架构设计 | Proposed | FR-003 | — |
 
 ## 状态说明
 

@@ -43,11 +43,16 @@ print('updated $key=$value')
 }
 
 set_bool_field() {
+    local field="$1"
+    local val="$2"
+    # Convert shell true/false to Python True/False
+    local py_val
+    if [ "$val" = "true" ]; then py_val="True"; else py_val="False"; fi
     python3 -c "
 import json
 with open('$STATE_FILE', 'r') as f:
     d = json.load(f)
-d['$1'] = $2
+d['$field'] = $py_val
 with open('$STATE_FILE', 'w') as f:
     json.dump(d, f, indent=2, ensure_ascii=False)
 "

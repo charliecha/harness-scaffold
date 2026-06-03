@@ -10,6 +10,7 @@ import (
 
 	"github.com/harness-claude/crypto-snapshot/internal/cache"
 	"github.com/harness-claude/crypto-snapshot/internal/client"
+	"github.com/harness-claude/crypto-snapshot/internal/health"
 	"github.com/harness-claude/crypto-snapshot/internal/metrics"
 )
 
@@ -20,10 +21,12 @@ type PriceFetcher interface {
 
 // Handler holds dependencies for all HTTP handlers.
 type Handler struct {
-	cache   *cache.Store
-	client  PriceFetcher
-	logger  *slog.Logger
-	version VersionInfo
+	cache        *cache.Store
+	client       PriceFetcher
+	logger       *slog.Logger
+	version      VersionInfo
+	checkers     []health.Checker
+	probeTimeout time.Duration
 }
 
 // VersionInfo carries build-time metadata.
@@ -34,12 +37,14 @@ type VersionInfo struct {
 }
 
 // New returns a configured Handler.
-func New(c *cache.Store, fetcher PriceFetcher, logger *slog.Logger, v VersionInfo) *Handler {
+func New(c *cache.Store, fetcher PriceFetcher, logger *slog.Logger, v VersionInfo, checkers []health.Checker, probeTimeout time.Duration) *Handler {
 	return &Handler{
-		cache:   c,
-		client:  fetcher,
-		logger:  logger,
-		version: v,
+		cache:        c,
+		client:       fetcher,
+		logger:       logger,
+		version:      v,
+		checkers:     checkers,
+		probeTimeout: probeTimeout,
 	}
 }
 
@@ -50,9 +55,41 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/snapshot/", h.Snapshot)
 }
 
-// Health returns a 200 OK with a simple status body.
+// Health probes all registered dependency checkers and returns an aggregated status.
+// HTTP status is always 200; degraded state is communicated via the response body.
 func (h *Handler) Health(w http.ResponseWriter, r *http.Request) {
-	writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+	type depStatus struct {
+		Status    string `json:"status"`
+		LatencyMs int64  `json:"latency_ms"`
+	}
+	type healthResponse struct {
+		Status       string               `json:"status"`
+		Dependencies map[string]depStatus `json:"dependencies"`
+	}
+
+	deps := make(map[string]depStatus, len(h.checkers))
+	overall := "ok"
+
+	for _, c := range h.checkers {
+		ctx, cancel := context.WithTimeout(r.Context(), h.probeTimeout)
+		result := c.Check(ctx)
+		cancel()
+
+		deps[c.Name()] = depStatus{Status: result.Status, LatencyMs: result.LatencyMs}
+
+		level := slog.LevelDebug
+		if result.Status != "ok" {
+			overall = "degraded"
+			level = slog.LevelWarn
+		}
+		h.logger.Log(r.Context(), level, "health probe",
+			slog.String("dependency", c.Name()),
+			slog.String("status", result.Status),
+			slog.Int64("latency_ms", result.LatencyMs),
+		)
+	}
+
+	writeJSON(w, http.StatusOK, healthResponse{Status: overall, Dependencies: deps})
 }
 
 // Version returns build metadata.

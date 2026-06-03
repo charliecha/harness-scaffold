@@ -13,6 +13,7 @@ import (
 
 	"github.com/harness-claude/crypto-snapshot/internal/cache"
 	"github.com/harness-claude/crypto-snapshot/internal/client"
+	"github.com/harness-claude/crypto-snapshot/internal/health"
 	"github.com/harness-claude/crypto-snapshot/internal/metrics"
 )
 
@@ -35,10 +36,77 @@ func newTestHandler(fetcher PriceFetcher) *Handler {
 		fetcher,
 		logger,
 		VersionInfo{Version: "test", Commit: "abc", BuildTime: "2026-01-01T00:00:00Z"},
+		nil,
+		3*time.Second,
 	)
 }
 
-func TestHealth(t *testing.T) {
+func newTestHandlerWithCheckers(fetcher PriceFetcher, checkers []health.Checker) *Handler {
+	logger := slog.New(slog.NewJSONHandler(os.Stderr, nil))
+	return New(
+		cache.New(time.Minute),
+		fetcher,
+		logger,
+		VersionInfo{Version: "test", Commit: "abc", BuildTime: "2026-01-01T00:00:00Z"},
+		checkers,
+		3*time.Second,
+	)
+}
+
+// mockChecker is a test double for health.Checker.
+type mockChecker struct {
+	name   string
+	result health.Result
+}
+
+func (m *mockChecker) Name() string                        { return m.name }
+func (m *mockChecker) Check(_ context.Context) health.Result { return m.result }
+
+func TestHealth_allOk(t *testing.T) {
+	checkers := []health.Checker{
+		&mockChecker{name: "coingecko", result: health.Result{Status: "ok", LatencyMs: 42}},
+	}
+	h := newTestHandlerWithCheckers(&mockFetcher{}, checkers)
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/health", nil)
+	h.Health(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("got %d, want 200", rec.Code)
+	}
+	var body map[string]any
+	_ = json.NewDecoder(rec.Body).Decode(&body)
+	if body["status"] != "ok" {
+		t.Errorf("got status %q, want %q", body["status"], "ok")
+	}
+	deps, _ := body["dependencies"].(map[string]any)
+	cg, _ := deps["coingecko"].(map[string]any)
+	if cg["status"] != "ok" {
+		t.Errorf("coingecko status: got %q, want %q", cg["status"], "ok")
+	}
+}
+
+func TestHealth_degraded(t *testing.T) {
+	checkers := []health.Checker{
+		&mockChecker{name: "coingecko", result: health.Result{Status: "unavailable", LatencyMs: 3000}},
+	}
+	h := newTestHandlerWithCheckers(&mockFetcher{}, checkers)
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/health", nil)
+	h.Health(rec, req)
+
+	// HTTP 200 even when degraded (AC-2b)
+	if rec.Code != http.StatusOK {
+		t.Errorf("got %d, want 200 even when degraded", rec.Code)
+	}
+	var body map[string]any
+	_ = json.NewDecoder(rec.Body).Decode(&body)
+	if body["status"] != "degraded" {
+		t.Errorf("got status %q, want %q", body["status"], "degraded")
+	}
+}
+
+func TestHealth_noCheckers(t *testing.T) {
 	h := newTestHandler(&mockFetcher{})
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/health", nil)
@@ -47,8 +115,7 @@ func TestHealth(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Errorf("got %d, want 200", rec.Code)
 	}
-
-	var body map[string]string
+	var body map[string]any
 	_ = json.NewDecoder(rec.Body).Decode(&body)
 	if body["status"] != "ok" {
 		t.Errorf("got status %q, want %q", body["status"], "ok")
