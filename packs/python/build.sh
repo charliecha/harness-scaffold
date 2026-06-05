@@ -3,7 +3,7 @@
 # 退出码 0 = PASSED，非 0 = FAILED
 
 set -uo pipefail
-source "$(git rev-parse --show-toplevel)/.harness/lib.sh"
+source "$(dirname "$0")/../../lib.sh"
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'

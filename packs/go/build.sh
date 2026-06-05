@@ -5,7 +5,7 @@
 
 set -uo pipefail
 
-source "$(git rev-parse --show-toplevel)/.harness/lib.sh"
+source "$(dirname "$0")/../../lib.sh"
 
 ARTIFACT=$(harness_get artifact_name)
 

@@ -5,7 +5,7 @@
 
 set -uo pipefail
 
-source "$(git rev-parse --show-toplevel)/.harness/lib.sh"
+source "$(dirname "$0")/lib.sh"
 
 PASS=0
 FAIL=0
