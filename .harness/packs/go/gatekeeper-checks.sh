@@ -70,13 +70,13 @@ check_with_output "race-free tests pass" \
 # 覆盖率基线（阈值来自 .harness/config.json）
 THRESHOLD=$(harness_get coverage_threshold)
 echo -n "   Measuring coverage... "
-COV_OUTPUT=$(go test -coverprofile=/tmp/cs_gatekeeper_cov.out -covermode=atomic ./internal/... 2>&1)
+COV_OUTPUT=$(go test -coverprofile=/tmp/harness_gatekeeper_cov.out -covermode=atomic ./internal/... 2>&1)
 if [ $? -ne 0 ]; then
     echo -e "${RED}❌ coverage check: test run failed${NC}"
     FAIL=$((FAIL + 1))
     FAILED_ITEMS+=("coverage >= ${THRESHOLD}%")
 else
-    COVERAGE=$(go tool cover -func=/tmp/cs_gatekeeper_cov.out 2>/dev/null | \
+    COVERAGE=$(go tool cover -func=/tmp/harness_gatekeeper_cov.out 2>/dev/null | \
                grep "^total:" | awk '{print $3}' | tr -d '%')
     if [ -z "$COVERAGE" ]; then
         echo -e "${RED}❌ coverage check: could not parse coverage${NC}"
@@ -98,13 +98,13 @@ fi
 
 # 版本元数据可注入
 check_with_output "version metadata injectable" \
-    'go build -ldflags="-X main.Version=gate-test" -o /tmp/cs_gate_test ./cmd/server && \
-     /tmp/cs_gate_test --version 2>&1 | grep -q "gate-test" && \
-     rm -f /tmp/cs_gate_test'
+    'go build -ldflags="-X main.Version=gate-test" -o /tmp/harness_gate_test ./cmd/server && \
+     /tmp/harness_gate_test --version 2>&1 | grep -q "gate-test" && \
+     rm -f /tmp/harness_gate_test'
 
 # go.mod 幂等
 check "go.mod up to date" \
-    'cp go.mod /tmp/cs_go_mod_bak && \
+    'cp go.mod /tmp/harness_go_mod_bak && \
      go mod tidy 2>/dev/null && \
-     diff -q go.mod /tmp/cs_go_mod_bak && \
-     rm -f /tmp/cs_go_mod_bak'
+     diff -q go.mod /tmp/harness_go_mod_bak && \
+     rm -f /tmp/harness_go_mod_bak'

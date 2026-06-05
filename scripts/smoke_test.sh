@@ -4,7 +4,10 @@
 
 set -uo pipefail
 
-source "$(git rev-parse --show-toplevel)/.harness/lib.sh"
+_d="$(cd "$(dirname "$0")" && pwd)"
+while [ "$_d" != "/" ] && [ ! -f "$_d/.harness/lib.sh" ]; do _d="$(dirname "$_d")"; done
+[ -f "$_d/.harness/lib.sh" ] || { echo "harness: .harness/lib.sh not found upward from $0" >&2; exit 1; }
+source "$_d/.harness/lib.sh"
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
