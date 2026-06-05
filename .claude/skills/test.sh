@@ -1,6 +1,6 @@
 #!/bin/bash
 # .claude/skills/test.sh — Test Skill dispatcher
-# 读 .harness/config.json 的 language，调用 .harness/packs/<lang>/test.sh
+# 读 .harness-config.json 的 language，调用 .harness/packs/<lang>/test.sh
 set -euo pipefail
 _d="$(cd "$(dirname "$0")" && pwd)"
 while [ "$_d" != "/" ] && [ ! -f "$_d/.harness/lib.sh" ]; do _d="$(dirname "$_d")"; done

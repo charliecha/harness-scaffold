@@ -1,6 +1,6 @@
 # 通用红线（语言无关）
 
-本文件列出所有项目共享的硬性规则，不依赖具体编程语言或工具链。语言专属规则见 `.harness/rules/$LANG.md`（$LANG 来自 `.harness/config.json` 的 `language` 字段）。
+本文件列出所有项目共享的硬性规则，不依赖具体编程语言或工具链。语言专属规则见 `.harness/rules/$LANG.md`（$LANG 来自 `.harness-config.json` 的 `language` 字段）。
 
 ## 安全红线
 
@@ -11,7 +11,7 @@
 
 ## 代码质量
 
-- 测试覆盖率不得低于 `.harness/config.json` 中 `coverage_threshold` 字段配置的阈值
+- 测试覆盖率不得低于 `.harness-config.json` 中 `coverage_threshold` 字段配置的阈值
 - 所有对外接口（HTTP / RPC / CLI）必须有对应单元测试
 - Build Skill 和 Test Skill 必须通过才能进入 gatekeeper 阶段
 

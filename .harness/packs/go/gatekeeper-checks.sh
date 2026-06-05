@@ -67,7 +67,7 @@ check_with_output "build succeeds" \
 check_with_output "race-free tests pass" \
     'go test -race -count=1 -timeout=60s ./...'
 
-# 覆盖率基线（阈值来自 .harness/config.json）
+# 覆盖率基线（阈值来自 .harness-config.json）
 THRESHOLD=$(harness_get coverage_threshold)
 echo -n "   Measuring coverage... "
 COV_OUTPUT=$(go test -coverprofile=/tmp/harness_gatekeeper_cov.out -covermode=atomic ./internal/... 2>&1)

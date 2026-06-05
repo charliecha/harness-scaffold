@@ -4,7 +4,7 @@
 
 本项目红线分两层：
 - **通用红线**见 [.harness/rules/common.md](.harness/rules/common.md)
-- **语言专属红线**见 `.harness/rules/$LANG.md`（$LANG 来自 [.harness/config.json](.harness/config.json) 的 `language` 字段，当前为 `go` → [.harness/rules/go.md](.harness/rules/go.md)）
+- **语言专属红线**见 `.harness/rules/$LANG.md`（$LANG 来自 [.harness-config.json](.harness-config.json) 的 `language` 字段，当前为 `go` → [.harness/rules/go.md](.harness/rules/go.md)）
 
 Claude 在每个 dev 阶段前应读取这两个文件。
 
