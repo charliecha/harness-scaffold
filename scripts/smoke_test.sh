@@ -4,6 +4,8 @@
 
 set -uo pipefail
 
+source "$(git rev-parse --show-toplevel)/.harness/lib.sh"
+
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
@@ -11,7 +13,7 @@ NC='\033[0m'
 PASS=0
 FAIL=0
 SERVER_PID=""
-BINARY="${1:-./bin/crypto-snapshot}"
+BINARY="${1:-./bin/$(harness_get artifact_name)}"
 
 cleanup() {
     [ -n "$SERVER_PID" ] && kill "$SERVER_PID" 2>/dev/null && wait "$SERVER_PID" 2>/dev/null
@@ -23,10 +25,11 @@ trap cleanup EXIT
 lsof -ti:8080 | xargs kill -9 2>/dev/null || true
 sleep 0.3
 
-# ── 构建（如果二进制不存在）──────────────────────
+# ── 二进制必须已构建好（构建是 build skill 的责任）─
 if [ ! -f "$BINARY" ]; then
-    echo "Building $BINARY..."
-    go build -o "$BINARY" ./cmd/server || { echo -e "${RED}❌ build failed${NC}"; exit 1; }
+    echo -e "${RED}❌ binary not found: $BINARY${NC}"
+    echo "请先运行: bash .claude/skills/build.sh"
+    exit 1
 fi
 
 # ── 启动服务 ──────────────────────────────────────

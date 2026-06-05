@@ -1,5 +1,5 @@
 #!/bin/bash
-# scripts/workflow.sh — 状态机管理器
+# .harness/workflow.sh — 状态机管理器
 # 读写 .workflow-state.json，驱动六阶段工作流
 # 用法：
 #   workflow.sh status              — 查看当前状态
@@ -205,7 +205,7 @@ advance)
         GATE=$(python3 -c "import json; d=json.load(open('$STATE_FILE')); print(d.get('gatekeeper_passed', False))")
         if [ "$GATE" != "True" ]; then
             echo -e "${RED}❌ 前置条件未满足：gatekeeper 未通过${NC}"
-            echo -e "   先运行：bash scripts/gatekeeper.sh，通过后执行 workflow.sh gate-pass"
+            echo -e "   先运行：bash .harness/gatekeeper.sh，通过后执行 workflow.sh gate-pass"
             exit 1
         fi
         ;;

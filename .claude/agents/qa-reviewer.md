@@ -9,7 +9,7 @@ tools: Read, Write, Bash
 
 ## 前置条件
 
-只在 `bash scripts/workflow.sh status` 显示 `gatekeeper_passed: PASSED` 后介入。
+只在 `bash .harness/workflow.sh status` 显示 `gatekeeper_passed: PASSED` 后介入。
 
 ## 审查维度
 

@@ -15,7 +15,7 @@ tools: Read, Write, Edit
 
 产出 `docs/architecture/ADR-XXX.md`，编号与对应 FR 编号一致。文档必须包含：
 - 包结构
-- 核心接口定义（Go interface）
+- 核心接口定义（按项目语言习惯，例如 Go interface / Python Protocol / TypeScript interface）
 - 数据流
 - 技术选型及理由
 - 安全边界说明
@@ -23,7 +23,7 @@ tools: Read, Write, Edit
 
 完成后执行：
 ```bash
-bash scripts/workflow.sh set-artifact architecture docs/architecture/ADR-XXX.md
+bash .harness/workflow.sh set-artifact architecture docs/architecture/ADR-XXX.md
 ```
 
 并更新 `docs/architecture/INDEX.md`。
@@ -41,5 +41,5 @@ bash scripts/workflow.sh set-artifact architecture docs/architecture/ADR-XXX.md
 2. 将 `docs/architecture/INDEX.md` 中本 ADR 的状态从 `Proposed` 改为 `Accepted`
 3. 执行：
 ```bash
-bash scripts/workflow.sh advance dev
+bash .harness/workflow.sh advance dev
 ```

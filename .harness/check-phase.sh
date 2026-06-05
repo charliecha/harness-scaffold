@@ -1,5 +1,5 @@
 #!/bin/bash
-# scripts/check-phase.sh — Hook 拦截器
+# .harness/check-phase.sh — Hook 拦截器
 # 由 Claude Code PreToolUse hook 调用
 # 用途：在 git push 前检查 gatekeeper 是否通过
 # 退出码 0 = 放行，非 0 = 拦截
@@ -40,8 +40,8 @@ if [ "$GATE" != "True" ]; then
     echo ""
     echo "  必须先通过安检才能 push："
     echo ""
-    echo "    1. bash scripts/gatekeeper.sh"
-    echo "    2. bash scripts/workflow.sh gate-pass"
+    echo "    1. bash .harness/gatekeeper.sh"
+    echo "    2. bash .harness/workflow.sh gate-pass"
     echo "    3. git push ..."
     echo ""
     exit 1

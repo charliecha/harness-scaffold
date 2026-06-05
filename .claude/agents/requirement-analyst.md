@@ -17,7 +17,7 @@ tools: Read, Write, Edit, Bash
 
 完成后执行：
 ```bash
-bash scripts/workflow.sh set-artifact requirements docs/requirements/FR-XXX.md
+bash .harness/workflow.sh set-artifact requirements docs/requirements/FR-XXX.md
 ```
 
 并更新 `docs/requirements/INDEX.md`。
@@ -35,5 +35,5 @@ bash scripts/workflow.sh set-artifact requirements docs/requirements/FR-XXX.md
 2. 将 `docs/requirements/INDEX.md` 中本需求的状态从 `Active` 改为 `Done`，填写关联 ADR 和 Review 列（暂填 `—`）
 3. 执行：
 ```bash
-bash scripts/workflow.sh advance architecture
+bash .harness/workflow.sh advance architecture
 ```

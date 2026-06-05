@@ -56,7 +56,7 @@ tools: Read, Bash
 2. 更新 `docs/architecture/INDEX.md`：本 ADR 状态改为 `Accepted`，填写关联 Review 编号
 3. 执行：
 ```bash
-bash scripts/workflow.sh complete
+bash .harness/workflow.sh complete
 ```
 
 用户输入「拒绝」后：列出未满足项及退回阶段，不执行 complete。
