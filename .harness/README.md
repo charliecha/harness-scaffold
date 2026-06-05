@@ -68,6 +68,7 @@ bash .harness/init.sh --lang=python --name=my-app
 │       └── gatekeeper-checks.sh
 │
 └── defaults/              ← init 时铺到项目根的种子文件
+    ├── .harness-config.json  ← 项目配置模板（含 __LANG__ / __NAME__ / __COVERAGE__ 占位符）
     ├── CLAUDE.md          ← 项目 CLAUDE.md 模板（含 __PROJECT_NAME__ / __LANG__ 占位符）
     ├── workflow-state.json
     ├── claude/            → .claude/
