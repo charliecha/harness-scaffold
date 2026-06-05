@@ -4,10 +4,12 @@
 
 ## 一键初始化新项目
 
+`.harness/` 同时托管在独立 scaffold 仓库 [`charliecha/harness-scaffold`](https://github.com/charliecha/harness-scaffold)，新项目直接 clone 即可：
+
 ```bash
-# 1. 在新项目根目录下，拷贝 .harness/
+# 1. 在新项目根目录下，直接把 scaffold clone 为 .harness/
 cd /path/to/new-project
-cp -r /path/to/harness-source/.harness ./
+git clone https://github.com/charliecha/harness-scaffold.git .harness
 
 # 2. 跑 init
 bash .harness/init.sh --lang=python --name=my-app
@@ -19,6 +21,13 @@ bash .harness/init.sh --lang=python --name=my-app
 #    CLAUDE.md                    ← 项目级 AI 工程准则（已填好项目名 + 语言）
 #    scripts/smoke_test.sh        ← 业务冒烟测试占位符
 #    docs/{requirements,architecture,reviews}/INDEX.md
+```
+
+或不依赖网络，从已有的 harness 源仓拷贝（与上等价）：
+
+```bash
+cp -r /path/to/harness-source/.harness ./
+bash .harness/init.sh --lang=python --name=my-app
 ```
 
 ### init.sh 参数
@@ -126,13 +135,42 @@ bash .harness/init.sh --lang=python --name=my-app
 
 ### 升级 harness
 
-未来若把 `.harness/` 改成独立 git 仓库（L3），现有用户的升级路径：
+`.harness/` 通过 `git subtree` 镜像到独立 scaffold 仓库 [`charliecha/harness-scaffold`](https://github.com/charliecha/harness-scaffold)。两种升级路径：
+
+#### 1. 已有项目升级（推荐 git subtree）
 
 ```bash
-cd project-root
+# 一次性：添加 scaffold 远程
+git remote add harness-scaffold https://github.com/charliecha/harness-scaffold.git
+
+# 每次升级：拉取上游变更到 .harness/
+git fetch harness-scaffold
+git subtree pull --prefix=.harness harness-scaffold main --squash
+```
+
+#### 2. 把本地 .harness/ 的改进推回 scaffold（维护者用）
+
+```bash
+git subtree push --prefix=.harness harness-scaffold main
+```
+
+#### 3. 已有项目无 subtree 关系（简单方案，丢历史）
+
+```bash
 rm -rf .harness
-cp -r .../updated-harness/.harness ./
+git clone https://github.com/charliecha/harness-scaffold.git .harness
+rm -rf .harness/.git   # 不需要 scaffold 的历史
 # 不重新跑 init.sh——init 只在新项目首次使用
 ```
 
-`.claude/`、`CLAUDE.md`、`.workflow-state.json` 不受影响。
+⚠️ **已知问题：`config.json` 不应跨项目同步**
+
+`.harness/config.json` 内含项目专属字段（`language`、`artifact_name`），而 scaffold 仓库里的版本是空模板。`subtree pull` 会用空模板覆盖本地。当前对策：
+
+- 拉取前：`cp .harness/config.json /tmp/cfg.bak`
+- `subtree pull` 后：`mv /tmp/cfg.bak .harness/config.json`
+- 推送前：临时把 config.json 重置为空模板，push 完恢复
+
+未来计划把 config.json 拆分为 schema（同步）+ 项目实例（不同步），从根本解决。
+
+无论选哪种升级路径，`.claude/`、`CLAUDE.md`、`.workflow-state.json` 不受影响。
