@@ -84,10 +84,11 @@ info "Harness init: lang=$LANG name=$NAME coverage=$COVERAGE"
 info "Project root: $PROJECT_ROOT"
 echo ""
 
-# 1. 写 .harness-config.json 到项目根（不在 .harness/ 里，避免被 subtree 同步污染）
-cat > "$PROJECT_ROOT/.harness-config.json" << EOF
-{"language":"$LANG","coverage_threshold":$COVERAGE,"artifact_name":"$NAME"}
-EOF
+# 1. 写 .harness-config.json 到项目根（从 defaults/ 拷贝模板 + 替换占位符）
+sed -e "s/__LANG__/$LANG/g" \
+    -e "s/__COVERAGE__/$COVERAGE/g" \
+    -e "s/__NAME__/$NAME/g" \
+    "$DEFAULTS/.harness-config.json" > "$PROJECT_ROOT/.harness-config.json"
 ok "wrote .harness-config.json"
 
 # 2. .claude/
