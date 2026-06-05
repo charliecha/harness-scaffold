@@ -36,7 +36,7 @@ bash .harness/init.sh --lang=python --name=my-app
 |---|---|---|
 | `--lang=<go\|python\|...>` | ✅ | 语言 pack 名，必须在 `.harness/packs/` 下存在 |
 | `--name=<project-name>` | | 项目名，写入 CLAUDE.md 标题；默认取当前目录名 |
-| `--coverage=<n>` | | 覆盖率阈值，写入 `.harness/config.json`，默认 80 |
+| `--coverage=<n>` | | 覆盖率阈值，写入 `.harness-config.json`，默认 80 |
 | `--force` | | 覆盖已存在的目标文件 |
 
 冲突保护：默认情况下，如果项目根下已存在 `.claude/`、`CLAUDE.md`、`.workflow-state.json` 等任何 init 会铺设的文件，会**报错退出**。用 `--force` 才会覆盖。
@@ -46,7 +46,6 @@ bash .harness/init.sh --lang=python --name=my-app
 ```
 .harness/
 ├── init.sh                ← 脚手架入口（用户唯一需要直接调用的命令）
-├── config.json            ← 项目级配置：language / coverage_threshold / artifact_name
 ├── lib.sh                 ← 共享 helper：harness_get / harness_lang / harness_require_pack
 │
 ├── workflow.sh            ← 六阶段状态机（语言无关）
@@ -83,6 +82,22 @@ bash .harness/init.sh --lang=python --name=my-app
         └── reviews/INDEX.md
 ```
 
+`.harness/` 内**没有** `config.json`——项目级配置位于项目根的 `.harness-config.json`（由 init.sh 生成），这样 subtree 同步上游 `.harness/` 时不会污染项目实例数据。
+
+### Init 后的项目根布局
+
+```text
+<project-root>/
+├── .harness/              ← 框架（来自 scaffold，不要手改）
+├── .harness-config.json   ← 项目级配置：language / coverage_threshold / artifact_name
+├── .claude/               ← Claude Code 配置（hooks + agents + skills）
+├── .workflow-state.json   ← 六阶段状态机实时快照
+├── CLAUDE.md              ← 项目级 AI 工程准则
+├── scripts/
+│   └── smoke_test.sh      ← 业务冒烟测试（项目自行实现）
+└── docs/{requirements,architecture,reviews}/INDEX.md
+```
+
 ## 设计原则
 
 ### 骨架 vs 皮肤
@@ -90,7 +105,7 @@ bash .harness/init.sh --lang=python --name=my-app
 - **骨架**（`.harness/` 下，不含 `packs/`）：语言无关、跨项目复用
 - **皮肤**（`.harness/packs/<lang>/`）：语言专属实现
 
-骨架文件零修改即可切换语言——靠 `.harness/config.json` 的 `language` 字段路由到对应 pack。
+骨架文件零修改即可切换语言——靠项目根的 `.harness-config.json` 的 `language` 字段路由到对应 pack。
 
 ### Pack 调用协议
 
@@ -163,14 +178,4 @@ rm -rf .harness/.git   # 不需要 scaffold 的历史
 # 不重新跑 init.sh——init 只在新项目首次使用
 ```
 
-⚠️ **已知问题：`config.json` 不应跨项目同步**
-
-`.harness/config.json` 内含项目专属字段（`language`、`artifact_name`），而 scaffold 仓库里的版本是空模板。`subtree pull` 会用空模板覆盖本地。当前对策：
-
-- 拉取前：`cp .harness/config.json /tmp/cfg.bak`
-- `subtree pull` 后：`mv /tmp/cfg.bak .harness/config.json`
-- 推送前：临时把 config.json 重置为空模板，push 完恢复
-
-未来计划把 config.json 拆分为 schema（同步）+ 项目实例（不同步），从根本解决。
-
-无论选哪种升级路径，`.claude/`、`CLAUDE.md`、`.workflow-state.json` 不受影响。
+无论选哪种升级路径，`.harness-config.json`、`.claude/`、`CLAUDE.md`、`.workflow-state.json` 不受影响——这些都在项目根，不属于 `.harness/` 同步范围。

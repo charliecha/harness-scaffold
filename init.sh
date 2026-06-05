@@ -1,6 +1,6 @@
 #!/bin/bash
 # .harness/init.sh — Harness 脚手架
-# 在新项目根目录中跑：把 defaults/ 下的种子文件铺到正确位置，生成 config.json。
+# 在新项目根目录中跑：把 defaults/ 下的种子文件铺到正确位置，生成 .harness-config.json。
 #
 # 用法：
 #   cd /path/to/new-project
@@ -63,6 +63,7 @@ PROJECT_ROOT="$(pwd)"
 
 # ─── 冲突检查 ──────────────────────────────────────
 CONFLICTS=()
+[ -e "$PROJECT_ROOT/.harness-config.json" ]  && CONFLICTS+=(".harness-config.json")
 [ -e "$PROJECT_ROOT/.claude" ]               && CONFLICTS+=(".claude/")
 [ -e "$PROJECT_ROOT/.workflow-state.json" ]  && CONFLICTS+=(".workflow-state.json")
 [ -e "$PROJECT_ROOT/CLAUDE.md" ]             && CONFLICTS+=("CLAUDE.md")
@@ -83,11 +84,11 @@ info "Harness init: lang=$LANG name=$NAME coverage=$COVERAGE"
 info "Project root: $PROJECT_ROOT"
 echo ""
 
-# 1. 写 config.json
-cat > "$HARNESS_ROOT/config.json" << EOF
+# 1. 写 .harness-config.json 到项目根（不在 .harness/ 里，避免被 subtree 同步污染）
+cat > "$PROJECT_ROOT/.harness-config.json" << EOF
 {"language":"$LANG","coverage_threshold":$COVERAGE,"artifact_name":"$NAME"}
 EOF
-ok "wrote .harness/config.json"
+ok "wrote .harness-config.json"
 
 # 2. .claude/
 mkdir -p "$PROJECT_ROOT/.claude"
