@@ -8,6 +8,30 @@
 
 Claude 在每个 dev 阶段前应读取这两个文件。
 
+### Agent 调用规范（必须遵守）
+
+`.claude/agents/` 下的 spec 文件是角色约束的唯一来源。由于这些自定义角色名无法通过 `subagent_type` 直接注册，**每次调用 Agent 工具前必须**：
+
+1. 读取对应 spec 文件（如 `.claude/agents/qa-reviewer.md`）
+2. 将 spec 文件全文作为 prompt 的第一部分注入，格式：
+
+```
+[角色 spec 全文]
+---
+[任务指令]
+```
+
+3. 不得省略 spec 注入，否则角色的禁止行为和输出格式约束将形同虚设
+
+### pm-acceptance 人工确认门（必须遵守）
+
+pm-planner agent 只负责产出验收报告，**`workflow.sh complete` 由主流程执行，不得委托给 agent**。流程：
+
+1. 调用 pm-planner agent，获取验收报告
+2. 将报告呈现给用户
+3. **等待用户明确输入「接受」后**，才执行 `bash .harness/workflow.sh complete`
+4. 用户输入「拒绝」时，列出未满足项，退回对应阶段，不执行 complete
+
 ## 开发工作流程
 
 所有功能开发必须遵循六阶段流程，状态由 `.workflow-state.json` 追踪：
