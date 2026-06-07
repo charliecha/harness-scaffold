@@ -47,7 +47,8 @@ fi
 check_with_output "py_compile succeeds" \
     'python3 -m compileall -q .'
 
-# pytest + coverage 一次性运行（阈值从 .harness-config.json）
+# pytest + coverage 一次性运行（阈值从 .harness-config.json，排除 .harness/ 等非业务目录）
 THRESHOLD=$(harness_get coverage_threshold)
 check_with_output "pytest passes with coverage >= ${THRESHOLD}%" \
-    "pytest --cov=. --cov-fail-under=${THRESHOLD} -q"
+    "pytest --cov=. --cov-config=pyproject.toml --cov-fail-under=${THRESHOLD} -q \
+     --ignore=.harness --ignore=scripts --ignore=docs"

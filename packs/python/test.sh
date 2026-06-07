@@ -22,8 +22,9 @@ if ! command -v pytest &>/dev/null; then
     fail "pytest" "未安装，请执行: pip install pytest pytest-cov"
 fi
 
-# 使用 pytest-cov 一次性运行：测试 + 覆盖率
-OUTPUT=$(pytest --cov=. --cov-report=term --cov-fail-under="$THRESHOLD" -q 2>&1)
+# 使用 pytest-cov 一次性运行：测试 + 覆盖率（排除 .harness/ 等非业务目录）
+OUTPUT=$(pytest --cov=. --cov-config=pyproject.toml --cov-report=term --cov-fail-under="$THRESHOLD" -q \
+    --ignore=.harness --ignore=scripts --ignore=docs 2>&1)
 EXITCODE=$?
 echo "$OUTPUT"
 if [ $EXITCODE -ne 0 ]; then

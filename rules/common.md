@@ -12,7 +12,7 @@
 ## 代码质量
 
 - 测试覆盖率不得低于 `.harness-config.json` 中 `coverage_threshold` 字段配置的阈值
-- 所有对外接口（HTTP / RPC / CLI）必须有对应单元测试
+- 所有对外接口（HTTP / RPC / CLI）必须有对应单元测试；**缺失视为 Critical，QA 审查必须标记为 FAILED**
 - Build Skill 和 Test Skill 必须通过才能进入 gatekeeper 阶段
 
 ## 流程规则
