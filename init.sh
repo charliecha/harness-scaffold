@@ -118,6 +118,25 @@ for sub in requirements architecture reviews; do
 done
 ok "seeded docs/{requirements,architecture,reviews}/INDEX.md"
 
+# 7. git pre-push hook — 委托 check-phase.sh 拦截未通过 gatekeeper 的 push
+if [ -d "$PROJECT_ROOT/.git/hooks" ]; then
+    HOOK_FILE="$PROJECT_ROOT/.git/hooks/pre-push"
+    if [ -e "$HOOK_FILE" ] && [ "$FORCE" -ne 1 ]; then
+        echo -e "${YELLOW}⚠  .git/hooks/pre-push 已存在，跳过（--force 覆盖）${NC}"
+    else
+        cat > "$HOOK_FILE" <<'HOOK'
+#!/bin/bash
+# pre-push — 委托给 harness check-phase.sh 检查 gatekeeper 状态
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+bash "$REPO_ROOT/.harness/check-phase.sh" "git push"
+HOOK
+        chmod +x "$HOOK_FILE"
+        ok "installed .git/hooks/pre-push (gatekeeper guard)"
+    fi
+else
+    echo -e "${YELLOW}⚠  未检测到 .git/hooks/，跳过 pre-push hook 安装${NC}"
+fi
+
 # ─── 后续提示 ──────────────────────────────────────
 echo ""
 echo -e "${GREEN}═══ Harness 初始化完成 ═══${NC}"
@@ -129,5 +148,8 @@ echo "     - .harness/rules/$LANG.md"
 echo "  2. 准备语言工具链（详见 .harness/rules/$LANG.md）"
 echo "  3. 开始第一个功能："
 echo "     bash .harness/workflow.sh start <feature-name>"
+echo ""
+echo "注：git pre-push hook 已安装，gatekeeper 未通过时 push 会被拦截。"
+echo "    其他开发者 clone 后需重新运行 bash .harness/init.sh 安装 hook。"
 echo ""
 echo "查看当前状态：bash .harness/workflow.sh status"
