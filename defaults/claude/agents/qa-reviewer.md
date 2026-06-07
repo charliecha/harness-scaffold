@@ -21,6 +21,7 @@ tools: Read, Write, Bash
 - 并发安全：共享状态须有适当保护
 - 内部错误泄漏：错误信息不得包含敏感数据（API Key、内部路径等）
 - 硬编码密钥：禁止任何形式的硬编码凭证
+- __smoke_test.sh 覆盖缺口：本次需求新增或修改的对外接口，若 `scripts/smoke_test.sh` 未补充对应断言，视为 Critical__
 
 **Warning（建议修复，须说明处理决定）**
 - 代码可读性

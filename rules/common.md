@@ -13,6 +13,7 @@
 
 - 测试覆盖率不得低于 `.harness-config.json` 中 `coverage_threshold` 字段配置的阈值
 - 所有对外接口（HTTP / RPC / CLI）必须有对应单元测试；**缺失视为 Critical，QA 审查必须标记为 FAILED**
+- **本次需求新增或修改的对外接口，必须在 `scripts/smoke_test.sh` 中同步补充冒烟断言；缺失视为 Critical，QA 审查必须标记为 FAILED**
 - Build Skill 和 Test Skill 必须通过才能进入 gatekeeper 阶段
 
 ## 流程规则
